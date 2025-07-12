@@ -16,8 +16,15 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 
 ## How to use:
 
+### First-time setup:
+- Create a virtual environment: `python -m venv .venv`
+- Activate the environment: `.\.venv\Scripts\activate`
+- Install required dependencies: `pip install -r requirements.txt`
+
+### Run the script:
+- Activate the virtual environment (if not already activated): `.\.venv\Scripts\activate`. (You can exit the environment with: `deactivate`)
 - Run the script with `python src/python_scraper_app.py`
-- You will be prompted to input the set of keywords, separated by a comma ','
+- You will be prompted to input the set of desired keywords, separated by a comma ','
 - Now, you can decide to:
     - Fetch the jobs manually with `run`
     - Start the scheduled search (every 10 minutes) with `start`
