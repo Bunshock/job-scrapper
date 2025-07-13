@@ -8,8 +8,13 @@ def main():
     search_keywords = input("Enter job search keywords (comma-separated): ").split(',')
     search_keywords = [keyword.strip() for keyword in search_keywords]
 
-    scraper = ComputrabajoScraper(search_keywords)
-    scheduler = JobScheduler(scraper)
+    location = input("Enter desired location (leave blank to search anywhere): ").strip()
+    location = location if location else None
+
+    scraper = ComputrabajoScraper(search_keywords, location)
+
+    interval = 10 # Fetch jobs every 10 minutes
+    scheduler = JobScheduler(interval, scraper)
 
     while True:
         user_input = input("Type 'run' to fetch jobs manually, 'start' to schedule" \
