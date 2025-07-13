@@ -45,13 +45,41 @@ class ComputrabajoScraper:
         soup = BeautifulSoup(response.text, "html.parser")
         jobs = []
         for job_card in soup.select("article.box_offer"):
-            title = job_card.select_one("a.js-o-link").get_text(strip=True)
-            company = job_card.select_one("a.emp").get_text(strip=True) if job_card.select_one("a.emp") else ""
-            location = job_card.select_one("p.location").get_text(strip=True) if job_card.select_one("p.location") else ""
-            link = base_url.rstrip("/") + job_card.select_one("a.js-o-link")["href"]
+            
+            # Title
+            title_tag = job_card.select_one("a.js-o-link")
+            title = title_tag.get_text(strip=True) if title_tag else "No title found"
+
+            # Company
+            company_tag = job_card.select_one("a.fc_base.t_ellipsis")
+            company = company_tag.get_text(strip=True) if company_tag else "No company found"
+
+            # Company link
+            company_link_tag = job_card.select_one("a.fc_base.t_ellipsis")
+            company_link = "No company link found"
+            if company_link_tag and company_link_tag.has_attr("href"):
+                company_link = base_url.rstrip("/") + company_link_tag["href"]
+
+            # Location
+            location_tag = job_card.select("p.fs16.fc_base.mt5 span.mr10")
+            location = "No location found"
+            # Both the company rating and location are in the same tag structure
+            # so we need to check for the class 'mr10' to get the location
+            for loc in location_tag:
+                if loc.get('class') == ['mr10']:
+                    location = loc.get_text(strip=True)
+                    break
+
+            # Link
+            link_tag = job_card.select_one("a.js-o-link")
+            link = "No link found"
+            if link_tag and link_tag.has_attr("href"):
+                link = base_url.rstrip("/") + link_tag["href"]
+            
             jobs.append({
                 "title": title,
                 "company": company,
+                "company_link": company_link,
                 "location": location,
                 "link": link
             })
@@ -68,4 +96,18 @@ class ComputrabajoScraper:
 
         # Filter jobs that are new (not in previous fetched_jobs)
         new_jobs = [job for job in self.fetched_jobs if job['link'] not in previous_jobs_links]
+
+        if new_jobs:
+            print("-" * 40)
+            print("New jobs found:")
+            for job in new_jobs:
+                print("-" * 40)
+                print(f"Title: {job['title']}")
+                print(f"Company: {job['company']}  ({job['company_link']})")
+                print(f"Location: {job['location']}")
+                print(f"Link: {job['link'] if job['link'] else 'No link found'}")
+        else:
+            print("No new jobs found.")
+        print("-" * 40)
+        
         return new_jobs
