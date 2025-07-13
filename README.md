@@ -26,7 +26,12 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 ### Run the script:
 - Activate the virtual environment (if not already activated): `./.venv/Scripts/activate`. (You can exit the environment with: `deactivate`)
 - Run the script with `python src/python_scraper_app.py`
-- You will be prompted to input the set of desired keywords, separated by a comma ','
+- Select the source website to scrap
+- Configure the scraper:
+    - You will be prompted to input the set of desired keywords, separated by a comma ','
+    - Configure the job search location
+    - Depending on website search rules, you might have to fulfill some conditions (e.g., you might not be able to keep both parameters empty)
+- You will also be prompted to configure the time between searches for automatic mode.
 - Now, you can decide to:
     - Fetch the jobs manually with `run`
     - Start the scheduled search (every 10 minutes) with `start`
@@ -35,7 +40,7 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 
 
 ## Future plans:
-- Make the app usable in any job-search related website.
+- (DONE) Make the app usable in any job-search related website.
 - Implement profiles:
     - When running the app, pass the profile as an argument.
     - If running with a profile, you are given the option add or remove a keyworkd, and change location.
