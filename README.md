@@ -17,6 +17,7 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 ## How to use:
 
 ### First-time setup:
+- Clone this repository: `git clone https://github.com/Bunshock/job-scrapper`
 - Create a virtual environment: `python -m venv .venv`
 - Activate the environment: `.\.venv\Scripts\activate`
 - Install required dependencies: `pip install -r requirements.txt`
@@ -36,3 +37,4 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 - Make the app usable in any job-search related website.
 - Implement profiles, so you don't have to load the website and keywords every time you run the app.
 - Be able to decide if the keywords should be looked for only in the job's title, or both in the title and the description.
+- Input location manually, or select from a group of pre-defined locations.
