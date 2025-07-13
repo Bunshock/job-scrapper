@@ -16,8 +16,17 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 
 ## How to use:
 
+### First-time setup:
+- Clone this repository: `git clone https://github.com/Bunshock/job-scrapper`
+- Move to repository folder: `cd job-scrapper` (or `dir .\job-scrapper` in Windows shell)
+- Create a virtual environment: `python -m venv .venv`
+- Activate the environment: `./.venv/Scripts/activate`
+- Install required dependencies: `pip install -r requirements.txt`
+
+### Run the script:
+- Activate the virtual environment (if not already activated): `./.venv/Scripts/activate`. (You can exit the environment with: `deactivate`)
 - Run the script with `python src/python_scraper_app.py`
-- You will be prompted to input the set of keywords, separated by a comma ','
+- You will be prompted to input the set of desired keywords, separated by a comma ','
 - Now, you can decide to:
     - Fetch the jobs manually with `run`
     - Start the scheduled search (every 10 minutes) with `start`
@@ -27,5 +36,9 @@ You can view all the fetched jobs from each category (keyword) in chronological 
 
 ## Future plans:
 - Make the app usable in any job-search related website.
-- Implement profiles, so you don't have to load the website and keywords every time you run the app.
+- Implement profiles:
+    - When running the app, pass the profile as an argument.
+    - If running with a profile, you are given the option add or remove a keyworkd, and change location.
+    - Save searched jobs for each profile.
 - Be able to decide if the keywords should be looked for only in the job's title, or both in the title and the description.
+- Input location manually, or select from a group of pre-defined locations.
