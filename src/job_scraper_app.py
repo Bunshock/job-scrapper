@@ -5,34 +5,39 @@ from jobs.computrabajo import ComputrabajoScraper
 from scheduler import JobScheduler
 
 def main():
-    search_keywords = input("Enter job search keywords (comma-separated): ").split(',')
+    search_keywords = input("Enter job search keywords (comma-separated) (leave blank to search any job): ").split(',')
     search_keywords = [keyword.strip() for keyword in search_keywords]
 
     location = input("Enter desired location (leave blank to search anywhere): ").strip()
     location = location if location else None
 
-    scraper = ComputrabajoScraper(search_keywords, location)
+    while True:
+        try:
+            interval_minutes = int(input("Enter interval in minutes between searches (minimum 5): ").strip())
+            if interval_minutes >= 5:
+                break
+            else:
+                print("Please enter a value of 5 or more.")
+        except ValueError:
+            print("Please enter a valid integer.")
 
-    interval = 10 # Fetch jobs every 10 minutes
-    scheduler = JobScheduler(interval, scraper)
+    scraper = ComputrabajoScraper(search_keywords, location)
+    scheduler = JobScheduler(interval_minutes * 60, scraper)
 
     while True:
         user_input = input("Type 'run' to fetch jobs manually, 'start' to schedule" \
         " automatic fetching, or 'exit' to quit: ").strip().lower()
         
         if user_input == 'run':
-            new_jobs = scraper.get_new_jobs()
-            if new_jobs:
-                print("New jobs found:")
-                for job in new_jobs:
-                    print(job)
-            else:
-                print("No new jobs found.")
+            scraper.get_new_jobs()
         
         elif user_input == 'start':
-            interval = 10  # Fetch jobs every 10 minutes
-            print(f"Starting automatic job fetching every {interval} minutes...")
-            scheduler.start(interval)
+            print(f"Starting automatic job fetching every {interval_minutes} minutes...")
+            scheduler.start()
+
+        elif user_input == 'stop':
+            print("Stopping automatic job fetching.")
+            scheduler.stop()
         
         elif user_input == 'exit':
             print("Exiting the program.")
