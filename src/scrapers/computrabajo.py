@@ -1,3 +1,4 @@
+from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 from scrapers.base import JobScraperBase
@@ -92,7 +93,9 @@ class ComputrabajoScraper(JobScraperBase):
                 "company": company,
                 "company_link": company_link,
                 "location": location,
-                "link": link
+                "link": link,
+                "source": "Computrabajo",
+                "fetched_at": datetime.now()
             })
 
         # Update the fetched jobs

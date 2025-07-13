@@ -51,6 +51,8 @@ class JobScraperBase(ABC):
             print(f"Company: {job['company']}  ({job['company_link']})")
             print(f"Location: {job['location']}")
             print(f"Link: {job['link'] if job['link'] else 'No link found'}")
+            print(f"Source: {job['source']}")
+            print(f"Fetched at: {job['fetched_at']}")
 
     def print_fetched_jobs(self):
         if not self.fetched_jobs:
@@ -60,7 +62,6 @@ class JobScraperBase(ABC):
         print("-" * 40)
         print("Fetched Jobs:")
         self.print_job_list(self.fetched_jobs)
-        print("-" * 40)
 
     def print_new_jobs(self):
         if not self.new_jobs:
@@ -70,4 +71,3 @@ class JobScraperBase(ABC):
         print("-" * 40)
         print("New Jobs:")
         self.print_job_list(self.new_jobs)
-        print("-" * 40)
