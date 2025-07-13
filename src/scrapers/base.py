@@ -13,14 +13,13 @@ class JobScraperBase(ABC):
         self.search_keywords = []
         self.location = None
         self.fetched_jobs = []
-        self.new_jobs = []
 
     def prompt_for_configuration(self):
         raw_keywords_input = input("Enter job search keywords (comma-separated) (leave blank to search any job): ").split(',')
         search_keywords = [keyword.strip() for keyword in raw_keywords_input if keyword.strip()]
 
         location = input("Enter desired location (leave blank to search anywhere): ").strip()
-        location = location if location else None
+        location = location.replace(" ", "-") if location else None
 
         return search_keywords, location
 
@@ -29,7 +28,7 @@ class JobScraperBase(ABC):
         pass
 
     @abstractmethod
-    def fetch_jobs(self):
+    def fetch_jobs(self, keyword):
         pass
 
     def get_new_jobs(self):
@@ -38,7 +37,15 @@ class JobScraperBase(ABC):
         self.fetch_jobs()
 
         # Filter jobs that are new (not in previous fetched_jobs)
-        self.new_jobs = [job for job in self.fetched_jobs if job['link'] not in previous_jobs_links]
+        new_jobs = [job for job in self.fetched_jobs if job['link'] not in previous_jobs_links]
+
+        if not new_jobs:
+            print("No new jobs found.")
+            return
+        
+        print("-" * 40)
+        print("New Jobs:")
+        self.print_job_list(new_jobs)
 
     def clear_jobs(self):
         self.jobs = []
@@ -62,12 +69,3 @@ class JobScraperBase(ABC):
         print("-" * 40)
         print("Fetched Jobs:")
         self.print_job_list(self.fetched_jobs)
-
-    def print_new_jobs(self):
-        if not self.new_jobs:
-            print("No new jobs found.")
-            return
-        
-        print("-" * 40)
-        print("New Jobs:")
-        self.print_job_list(self.new_jobs)

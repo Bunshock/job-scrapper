@@ -23,25 +23,8 @@ class ComputrabajoScraper(JobScraperBase):
             if len(self.search_keywords) > 0 or self.location != None:
                 break
             print("\nERROR: You must provide at least keywords or a location. Please try again.\n" + "-" * 40)
-    
-    def fetch_jobs(self):
-        # Logic to scrape job listings from the Computrabajo website
-        # based on self.search_keywords and self.location
-        
-        # Construct the search URL based on keywords and location
-        query = "+".join(self.search_keywords)
-        location_query = self.location.replace(" ", "-") if self.location else ""
 
-        if not query and location_query:
-            search_url = f"{self.BASE_URL}empleos-en-{location_query}"
-        elif query and not location_query:
-            search_url = f"{self.BASE_URL}trabajo-de-{query}"
-        elif query and location_query:
-            search_url = f"{self.BASE_URL}trabajo-de-{query}-en-{location_query}"
-        else:
-            print("Error: You must provide at least keywords or a location.")
-            return
-
+    def fetch_jobs_from_url(self, search_url):
         # Print the configured URL
         print("-" * 40)
         print(f"Fetching jobs from: {search_url}")
@@ -100,3 +83,17 @@ class ComputrabajoScraper(JobScraperBase):
 
         # Update the fetched jobs
         self.fetched_jobs = self.fetched_jobs + jobs
+
+    def fetch_jobs(self):
+        # Construct the search URL based on keywords and location
+        if not self.search_keywords and self.location:
+            self.fetch_jobs_from_url(f"{self.BASE_URL}empleos-en-{self.location}")
+        elif self.search_keywords and not self.location:
+            for keyword in self.search_keywords:
+                self.fetch_jobs_from_url(f"{self.BASE_URL}trabajo-de-{keyword.replace(" ", "-")}")
+        elif self.search_keywords and self.location:
+            for keyword in self.search_keywords:
+                self.fetch_jobs_from_url(f"{self.BASE_URL}trabajo-de-{keyword.replace(" ", "-")}-en-{self.location}")
+        else:
+            print("Error: You must provide at least keywords or a location.")
+            return

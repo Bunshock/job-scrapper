@@ -44,8 +44,8 @@ def main():
         " automatic fetching, 'view' to see all fetched jobs, or 'exit' to quit: ").strip().lower()
         
         if user_input == 'run':
+            print("Fetching new jobs manually...")
             scraper.get_new_jobs()
-            scraper.print_new_jobs()
         
         elif user_input == 'start':
             print(f"Starting automatic job fetching every {interval_minutes} minutes...")
