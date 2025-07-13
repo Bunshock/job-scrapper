@@ -18,12 +18,12 @@ def main():
 
     scraper = SCRAPER_CLASSES[scraper_name]()
     scraper.initialize_scraper()
-    print("\nScraper initialized successfully.\n" + "-" * 40)
+    print("\nScraper initialized successfully.")
 
     # TODO: Load previously fetched jobs from a file or database if needed
 
     # Prompt for interval in minutes
-    print("You can set an interval for automatic job fetching.")
+    print("-" * 40 + "\nYou can set an interval for automatic job fetching.")
     while True:
         try:
             interval_minutes = int(input("Enter interval in minutes between searches (minimum 5): ").strip())
@@ -36,9 +36,10 @@ def main():
 
     print(f"Automatic job fetching will occur every {interval_minutes} minutes.")
     scheduler = JobScheduler(interval_minutes * 60, scraper)
-    print("\nJob Scheduler created successfully.\n" + "-" * 40)
+    print("\nJob Scheduler created successfully.")
 
     while True:
+        print("-" * 40)
         user_input = input("Type 'run' to fetch jobs manually, 'start' to schedule" \
         " automatic fetching, 'view' to see all fetched jobs, or 'exit' to quit: ").strip().lower()
         
@@ -69,7 +70,7 @@ def main():
             scraper.print_fetched_jobs()
         
         else:
-            print("Invalid input. Please try again.")
+            print("\nInvalid input. Please try again.")
 
 if __name__ == "__main__":
     main()
