@@ -19,8 +19,11 @@ class JobScheduler:
 
         def run():
             while self.running:
+                # Fetch and print new jobs
                 log("Fetching new jobs...")
                 self.job_fetcher.get_new_jobs()
+                self.job_fetcher.print_new_jobs()
+
                 time.sleep(self.interval)
 
         self.thread = threading.Thread(target=run, daemon=True)

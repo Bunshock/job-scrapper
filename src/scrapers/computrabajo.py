@@ -1,41 +1,52 @@
 from bs4 import BeautifulSoup
 import requests
+from scrapers.base import JobScraperBase
 
-class ComputrabajoScraper:
-    def __init__(self, search_keywords, location):
-        self.search_keywords = search_keywords
-        self.location = location
-        self.fetched_jobs = []
+class ComputrabajoScraper(JobScraperBase):
+    BASE_URL = "https://ar.computrabajo.com/"
 
+    def __init__(self):
+        super().__init__()
+
+    def initialize_scraper(self):
+        print("-" * 40)
+        print("Configuration setup for Computrabajo scraper:")
+        print("You can set search keywords and location when initializing the scraper.")
+        print("Example:\n    keywords: 'developer, python', location: 'Buenos Aires'")
+        print("You can also leave them blank to search for any job in any location.")
+        print("But you must provide at least one keyword or a location to search (they cannot both be empty).")
+        print("-" * 40)
+
+        while True:
+            self.search_keywords, self.location = self.prompt_for_configuration()
+            if len(self.search_keywords) > 0 or self.location != None:
+                break
+            print("\nERROR: You must provide at least keywords or a location. Please try again.\n" + "-" * 40)
+    
     def fetch_jobs(self):
         # Logic to scrape job listings from the Computrabajo website
         # based on self.search_keywords and self.location
-
-        if not self.search_keywords:
-            print("No search keywords provided.")
-            return
         
         # Construct the search URL based on keywords and location
-        base_url = "https://ar.computrabajo.com/"
         query = "+".join(self.search_keywords)
-        if self.location:
-            location_query = self.location.replace(" ", "-").lower()
-            search_url = f"{base_url}trabajo-de-{query}-en-{location_query}"
+        location_query = self.location.replace(" ", "-") if self.location else ""
+
+        if not query and location_query:
+            search_url = f"{self.BASE_URL}empleos-en-{location_query}"
+        elif query and not location_query:
+            search_url = f"{self.BASE_URL}trabajo-de-{query}"
+        elif query and location_query:
+            search_url = f"{self.BASE_URL}trabajo-de-{query}-en-{location_query}"
         else:
-            search_url = f"{base_url}trabajo-de-{query}"
+            print("Error: You must provide at least keywords or a location.")
+            return
 
         # Print the configured URL
+        print("-" * 40)
         print(f"Fetching jobs from: {search_url}")
         
         # Fetch the job listings
-        headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/115.0.0.0 Safari/537.36"
-            )
-        }
-        response = requests.get(search_url, headers=headers)
+        response = requests.get(search_url, headers=self.HEADERS)
         if response.status_code != 200:
             print(response.content)
             print("Failed to fetch jobs from Computrabajo.")
@@ -58,7 +69,7 @@ class ComputrabajoScraper:
             company_link_tag = job_card.select_one("a.fc_base.t_ellipsis")
             company_link = "No company link found"
             if company_link_tag and company_link_tag.has_attr("href"):
-                company_link = base_url.rstrip("/") + company_link_tag["href"]
+                company_link = self.BASE_URL.rstrip("/") + company_link_tag["href"]
 
             # Location
             location_tag = job_card.select("p.fs16.fc_base.mt5 span.mr10")
@@ -74,7 +85,7 @@ class ComputrabajoScraper:
             link_tag = job_card.select_one("a.js-o-link")
             link = "No link found"
             if link_tag and link_tag.has_attr("href"):
-                link = base_url.rstrip("/") + link_tag["href"]
+                link = self.BASE_URL.rstrip("/") + link_tag["href"]
             
             jobs.append({
                 "title": title,
@@ -85,29 +96,4 @@ class ComputrabajoScraper:
             })
 
         # Update the fetched jobs
-        self.fetched_jobs = jobs
-
-    def get_new_jobs(self):
-        # Logic to filter and return only new job postings
-
-        # Fetch the latest jobs
-        previous_jobs_links = {job['link'] for job in self.fetched_jobs}
-        self.fetch_jobs()
-
-        # Filter jobs that are new (not in previous fetched_jobs)
-        new_jobs = [job for job in self.fetched_jobs if job['link'] not in previous_jobs_links]
-
-        if new_jobs:
-            print("-" * 40)
-            print("New jobs found:")
-            for job in new_jobs:
-                print("-" * 40)
-                print(f"Title: {job['title']}")
-                print(f"Company: {job['company']}  ({job['company_link']})")
-                print(f"Location: {job['location']}")
-                print(f"Link: {job['link'] if job['link'] else 'No link found'}")
-        else:
-            print("No new jobs found.")
-        print("-" * 40)
-        
-        return new_jobs
+        self.fetched_jobs = self.fetched_jobs + jobs
